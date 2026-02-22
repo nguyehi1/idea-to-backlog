@@ -4,14 +4,15 @@ You will be given user stories. Your task is to add comprehensive acceptance cri
 
 ## Instructions:
 1. Read each user story carefully
-2. Write specific, testable acceptance criteria (checkboxes)
-3. Estimate effort in Story Points (SP) where 1 SP = 1 day of work
-4. Show breakdown by area (Frontend %, Backend %, ML %, DevOps %)
-5. Provide chain-of-thought reasoning for estimates
-6. Assign confidence levels (High/Medium/Low)
-7. Flag risk factors
-8. Identify dependencies
-9. Maintain the same categorization and sequencing from user_stories.md
+2. Write a specific **Details** section derived from the story content — do NOT leave generic placeholders; include concrete tech choices, data models, API contracts, constraints, or UX specifics that are relevant to that story
+3. Write specific, testable acceptance criteria (checkboxes)
+4. Estimate effort in Story Points (SP) where 1 SP = 1 day of work
+5. Show breakdown by area (Frontend %, Backend %, ML %, DevOps %)
+6. Provide chain-of-thought reasoning for estimates
+7. Assign confidence levels (High/Medium/Low)
+8. Flag risk factors
+9. Identify dependencies
+10. Maintain the same categorization and sequencing from user_stories.md
 
 ## Estimation Guidelines:
 - 1 SP = 1 day of focused work for a mid-level engineer
@@ -39,7 +40,13 @@ You will be given user stories. Your task is to add comprehensive acceptance cri
 ### Story A[N]: [Title]
 #### Description: 
 As a [user type], I want [goal], so that [benefit]
-**Details**: [Infrastructure requirements, tech stack choices, non-functional constraints (e.g., performance targets, security requirements, scalability needs)]
+**Details**:
+- **Tech Stack**: [Specific frameworks, libraries, cloud services chosen and why]
+- **Infrastructure**: [Hosting approach, containerization, CI/CD pipeline specifics]
+- **Performance Targets**: [Concrete thresholds, e.g., API response <200ms p95, page load <2s]
+- **Security Requirements**: [Auth mechanism, data encryption, compliance standards]
+- **Scalability**: [Expected load, scaling strategy, caching approach]
+- **Constraints**: [Any hard limitations from PRD, existing systems, or team decisions]
 
 #### Acceptance Criteria
 - [ ] [Specific, testable criterion 1]
@@ -81,7 +88,13 @@ Day 2:
 ### Story F[N]: [Title]
 #### Description:
 As a [user type], I want [goal], so that [benefit]
-**Details**: [UI/UX considerations, components needed, interactions]
+**Details**:
+- **Components**: [Specific UI components to build, e.g., SearchBar, PlaylistCard, AudioPlayer]
+- **UX Flow**: [Step-by-step user interaction from entry point to completion]
+- **State Management**: [What state is needed, how it's managed, e.g., Redux slice, React context]
+- **API Calls**: [Which backend endpoints this feature consumes]
+- **Responsive Design**: [Target devices/breakpoints, mobile-first or desktop-first]
+- **Edge Cases**: [Empty states, loading states, error states, permission edge cases]
 
 *(Use the same Acceptance Criteria, Effort Estimate, Risk Factors, Dependencies, and Build Order structure as above)*
 
@@ -92,7 +105,13 @@ As a [user type], I want [goal], so that [benefit]
 ### Story B[N]: [Title]
 #### Description:
 As a [user type], I want [goal], so that [benefit]
-**Details**: [APIs, data models, business logic]
+**Details**:
+- **Endpoints**: [HTTP method + path + request/response shape, e.g., POST /api/v1/playlists → { id, name, tracks }]
+- **Data Model**: [Key entities, fields, types, and relationships; note any schema changes]
+- **Business Rules**: [Core logic, validation rules, edge cases the backend must enforce]
+- **Integrations**: [Third-party APIs or internal services this story depends on]
+- **Performance**: [Query complexity, indexing needs, caching strategy]
+- **Error Handling**: [Expected failure modes and how they surface to the client]
 
 *(Use the same Acceptance Criteria, Effort Estimate, Risk Factors, Dependencies, and Build Order structure as above)*
 
@@ -105,7 +124,14 @@ As a [user type], I want [goal], so that [benefit]
 ### Story M[N]: [Title]
 #### Description:
 As a [user type], I want [goal], so that [benefit]
-**Details**: [Model requirements, data needs, training/inference]
+**Details**:
+- **Model Type**: [Algorithm or architecture chosen and rationale, e.g., collaborative filtering, fine-tuned BERT]
+- **Training Data**: [Source, approximate size, format, labeling requirements, data freshness needs]
+- **Input Features**: [Specific feature list with types and preprocessing steps]
+- **Output**: [What the model returns, format, confidence scores]
+- **Inference Requirements**: [Latency target, serving infrastructure, batch vs. real-time]
+- **Evaluation Metrics**: [Specific metrics and acceptance thresholds, e.g., Precision@10 ≥ 0.7]
+- **Retraining Strategy**: [Frequency, trigger conditions, monitoring approach]
 
 *(Use the same Acceptance Criteria, Effort Estimate, Risk Factors, Dependencies, and Build Order structure as above)*
 
@@ -172,6 +198,14 @@ As a [user type], I want [goal], so that [benefit]
 - Don't forget: unit tests, integration tests, documentation
 - Consider mobile and desktop if applicable
 - Include success and error states for UI
+
+## Guidelines for Details:
+- **Be specific, not generic**: Replace every bracket placeholder with actual content derived from the user story, PRD, and domain context
+- **Architecture stories**: Name the actual tech stack (e.g., "PostgreSQL on RDS", "Next.js 14"), list concrete SLAs, reference compliance standards by name (COPPA, GDPR, SOC 2)
+- **Frontend stories**: Name real component libraries (e.g., shadcn/ui, Radix), describe the exact UX flow in 2–4 steps, list which API endpoints the component calls
+- **Backend stories**: Include the full endpoint signature with sample request/response JSON, list every DB table or field being changed, call out third-party API rate limits or costs
+- **ML stories**: Specify dataset name or source URL if known, list feature names, state the exact metric threshold that defines "good enough" for production
+- **Avoid vague phrases** like "handle errors appropriately" or "ensure performance" — always attach a number or a specific mechanism
 
 ## Guidelines for Estimation:
 - Break down into granular tasks (helps accuracy)

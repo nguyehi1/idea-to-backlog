@@ -67,6 +67,20 @@ def _strip_emoji(text: str) -> str:
     return re.sub(r"^[\U00010000-\U0010ffff\u2600-\u27BF\U0001F300-\U0001FAFF]+\s*", "", text).strip()
 
 
+def _strip_markdown(text: str) -> str:
+    """Remove common markdown formatting characters for clean spreadsheet output."""
+    # Remove bold/italic markers (**text**, *text*, __text__, _text_)
+    text = re.sub(r"\*\*(.+?)\*\*", r"\1", text)
+    text = re.sub(r"__(.+?)__", r"\1", text)
+    text = re.sub(r"\*(.+?)\*", r"\1", text)
+    text = re.sub(r"_(.+?)_", r"\1", text)
+    # Remove inline code backticks
+    text = re.sub(r"`(.+?)`", r"\1", text)
+    # Remove standalone asterisks/backticks that weren't part of a pair
+    text = text.replace("`", "")
+    return text
+
+
 def parse_backlog(backlog_path: Path) -> list[dict]:
     """Parse backlog.md and return a list of story dicts."""
     text = backlog_path.read_text(encoding="utf-8")
@@ -112,9 +126,11 @@ def _parse_story_block(block: str, category: str) -> dict | None:
     # ── Description (combined user story + details) ────────────────
     desc_match = re.search(r"^(As\s+an?\s+.+)$", block, re.MULTILINE)
     description = desc_match.group(1).strip() if desc_match else ""
-    details_match = re.search(r"\*\*Details\*\*:\s*(.+)", block)
+    # Capture the full (possibly multiline) Details block up to the next #### section
+    details_match = re.search(r"\*\*Details\*\*:\s*(.*?)(?=\n####\s|\Z)", block, re.DOTALL)
     if details_match:
-        description = f"{description}\n\nDetails: {details_match.group(1).strip()}"
+        details_text = _strip_markdown(details_match.group(1).strip())
+        description = f"{description}\n\nDetails:\n{details_text}"
 
     # ── Effort ─────────────────────────────────────────────────────
     effort_match = re.search(r"Effort Estimate:\s+\*\*(\d+)\s+SP\*\*", block)
@@ -135,15 +151,15 @@ def _parse_story_block(block: str, category: str) -> dict | None:
 
     # ── Dependencies ───────────────────────────────────────────────
     dep_match = re.search(r"\*\*Dependencies\*\*:\s*(.+)", block)
-    dependencies = dep_match.group(1).strip() if dep_match else "None"
+    dependencies = _strip_markdown(dep_match.group(1).strip()) if dep_match else "None"
 
     # ── Build Order ────────────────────────────────────────────────
     order_match = re.search(r"\*\*Build Order\*\*:\s*#?(\d+)", block)
     build_order = int(order_match.group(1)) if order_match else 9999
 
     # ── Acceptance Criteria (full text) ──────────────────────────────
-    ac_items = re.findall(r"^\s*- \[ \]\s*(.+)$", block, re.MULTILINE)
-    acceptance_criteria = "\n".join(f"• {item.strip()}" for item in ac_items)
+    ac_items = re.findall(r"^\s*- \[[ xX]\]\s*(.+)$", block, re.MULTILINE)
+    acceptance_criteria = "\n".join(f"• {_strip_markdown(item.strip())}" for item in ac_items)
 
     return {
         "Build Order": build_order,

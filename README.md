@@ -40,7 +40,7 @@ source ~/.zshrc
 
 #### Step 1: Create a new project
 ```bash
-python scripts/cli.py new my-project
+python3 scripts/cli.py new my-project
 ```
 This creates `projects/my-project/idea.md` with a template to fill in.
 
@@ -51,19 +51,19 @@ Example: `projects/spotify-for-kids/idea.md`
 
 #### Step 3: Generate PRD
 ```bash
-python scripts/cli.py prd projects/my-project
+python3 scripts/cli.py prd projects/my-project
 
 # Overwrite without being prompted:
-python scripts/cli.py prd projects/my-project --force   # or -f
+python3 scripts/cli.py prd projects/my-project --force   # or -f
 ```
 Review and edit `prd.md` as needed.
 
 #### Step 4: Generate User Stories
 ```bash
-python scripts/cli.py stories projects/my-project
+python3 scripts/cli.py stories projects/my-project
 
 # Overwrite without being prompted:
-python scripts/cli.py stories projects/my-project --force   # or -f
+python3 scripts/cli.py stories projects/my-project --force   # or -f
 ```
 Review `user_stories.md` - stories are categorized into:
 - 🏗️ Architecture & Non-Functional
@@ -75,10 +75,10 @@ Stories are sequenced in build order.
 
 #### Step 5: Generate Backlog
 ```bash
-python scripts/cli.py backlog projects/my-project
+python3 scripts/cli.py backlog projects/my-project
 
 # Overwrite without being prompted:
-python scripts/cli.py backlog projects/my-project --force   # or -f
+python3 scripts/cli.py backlog projects/my-project --force   # or -f
 ```
 Review `backlog.md` with:
 - Detailed acceptance criteria
@@ -89,19 +89,19 @@ Review `backlog.md` with:
 #### Step 6: Export to Google Sheets *(optional)*
 ```bash
 # Creates a new spreadsheet automatically
-python scripts/cli.py export projects/my-project
+python3 scripts/cli.py export projects/my-project
 
 # Push into an existing spreadsheet
-python scripts/cli.py export projects/my-project --sheet-id <spreadsheet-id>
+python3 scripts/cli.py export projects/my-project --sheet-id <spreadsheet-id>
 
 # Create new sheet inside a specific Drive folder
-python scripts/cli.py export projects/my-project --folder-id <folder-id>
+python3 scripts/cli.py export projects/my-project --folder-id <folder-id>
 ```
 See [Google Sheets Export Setup](#-google-sheets-export-setup) below for one-time credential setup.
 
 #### Step 7: Check project status at any time
 ```bash
-python scripts/cli.py status projects/my-project
+python3 scripts/cli.py status projects/my-project
 ```
 
 #### Step 8: Sprint Planning
@@ -168,27 +168,27 @@ See `projects/spotify-for-kids/` for a complete example:
 
 ```bash
 # Create a new project
-python scripts/cli.py new <project-name>
+python3 scripts/cli.py new <project-name>
 
 # Generate PRD from idea.md
-python scripts/cli.py prd projects/<project-name>
-python scripts/cli.py prd projects/<project-name> --force   # or -f  – overwrite without prompt
+python3 scripts/cli.py prd projects/<project-name>
+python3 scripts/cli.py prd projects/<project-name> --force   # or -f  – overwrite without prompt
 
 # Generate user stories from prd.md
-python scripts/cli.py stories projects/<project-name>
-python scripts/cli.py stories projects/<project-name> --force   # or -f
+python3 scripts/cli.py stories projects/<project-name>
+python3 scripts/cli.py stories projects/<project-name> --force   # or -f
 
 # Generate backlog from user_stories.md
-python scripts/cli.py backlog projects/<project-name>
-python scripts/cli.py backlog projects/<project-name> --force   # or -f
+python3 scripts/cli.py backlog projects/<project-name>
+python3 scripts/cli.py backlog projects/<project-name> --force   # or -f
 
 # Export backlog to Google Sheets
-python scripts/cli.py export projects/<project-name>                                 # creates a new sheet
-python scripts/cli.py export projects/<project-name> --sheet-id <spreadsheet-id>    # update existing sheet
-python scripts/cli.py export projects/<project-name> --folder-id <folder-id>        # new sheet in specific Drive folder (ignored when --sheet-id is set)
+python3 scripts/cli.py export projects/<project-name>                                 # creates a new sheet
+python3 scripts/cli.py export projects/<project-name> --sheet-id <spreadsheet-id>    # update existing sheet
+python3 scripts/cli.py export projects/<project-name> --folder-id <folder-id>        # new sheet in specific Drive folder (ignored when --sheet-id is set)
 
 # Check project status
-python scripts/cli.py status projects/<project-name>
+python3 scripts/cli.py status projects/<project-name>
 ```
 
 ## � Google Sheets Export Setup
