@@ -1,10 +1,10 @@
-# PM Planner
+# Idea to Backlog
 
 AI-powered tool to transform product ideas into sprint-ready user stories with acceptance criteria and effort estimates.
 
 ## 🎯 Overview
 
-PM Planner uses AI (Google Gemini) to help you:
+Idea to Backlog uses AI (Google Gemini) to help you:
 1. **Generate PRDs** from product ideas
 2. **Break down features** into categorized, sequenced user stories
 3. **Create detailed backlogs** with acceptance criteria and effort estimates
