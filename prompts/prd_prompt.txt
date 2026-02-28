@@ -4,11 +4,13 @@ You will be given a product idea with context. Your task is to generate a well-s
 
 ## Instructions:
 1. Read the product overview and context carefully
-2. Identify and surface all assumptions being made (mark them clearly with 🚨)
-3. Create a comprehensive PRD following the structure below
-4. Be specific and actionable - avoid vague requirements
-5. Flag risks and dependencies clearly
-6. Include both functional and non-functional requirements
+2. Every item listed under "Business Goal" or "Key Features" MUST appear as a functional requirement in the PRD — do NOT silently demote them to assumptions or out-of-scope items
+3. Only items explicitly listed under "Out of Scope" in the idea should be treated as out of scope
+4. Identify and surface all assumptions being made (mark them clearly with 🚨)
+5. Create a comprehensive PRD following the structure below
+6. Be specific and actionable - avoid vague requirements
+7. Flag risks and dependencies clearly
+8. Include both functional and non-functional requirements
 
 ## PRD Structure:
 

@@ -54,8 +54,7 @@ def generate_with_gemini(system_prompt: str, content: str, context: str) -> str:
     """
     client = get_gemini_client()
 
-    full_prompt = (
-        f"{system_prompt}\n\n---\n\n"
+    user_prompt = (
         f"Here is the {context}:\n\n{content}\n\n"
         f"Today's date is {datetime.now().strftime('%Y-%m-%d')}."
     )
@@ -64,9 +63,10 @@ def generate_with_gemini(system_prompt: str, content: str, context: str) -> str:
         chunks = []
         for chunk in client.models.generate_content_stream(
             model="gemini-2.5-flash",
-            contents=full_prompt,
+            contents=user_prompt,
             config=types.GenerateContentConfig(
-                temperature=1.0,
+                system_instruction=system_prompt,
+                temperature=0.2,
                 max_output_tokens=65536,
             ),
         ):
@@ -89,6 +89,11 @@ def generate_with_gemini(system_prompt: str, content: str, context: str) -> str:
             ) from e
         else:
             raise RuntimeError(f"Gemini API error: {e}") from e
+    except errors.ServerError as e:
+        raise RuntimeError(
+            "Gemini server error (5xx). This is likely transient — please retry.\n"
+            f"Details: {e}"
+        ) from e
 
 
 def load_file(project_path: Path, filename: str, required_file: str = None) -> str:
@@ -113,9 +118,17 @@ def load_file(project_path: Path, filename: str, required_file: str = None) -> s
         if required_file:
             error_msg += f". Run generate_{Path(required_file).stem}.py first."
         raise FileNotFoundError(error_msg)
-    
+
     with open(file_path, 'r') as f:
-        return f.read()
+        content = f.read()
+
+    if not content.strip():
+        raise ValueError(
+            f"{filename} in {project_path} is empty.\n"
+            "Make sure the file is saved and contains content before generating."
+        )
+
+    return content
 
 
 def save_file(project_path: Path, filename: str, content: str, force: bool = False):
@@ -156,6 +169,17 @@ def run_generation(
     Eliminates boilerplate duplicated across all generate_*.py scripts.
     Pass force=True to overwrite existing output without prompting.
     """
+    # ── Guard: check for overwrite before burning API tokens ──────────────────
+    output_path = project_path / output_filename
+    if output_path.exists() and not force:
+        try:
+            confirm = input(f"⚠️  {output_filename} already exists. Overwrite? [y/N] ").strip().lower()
+        except (EOFError, KeyboardInterrupt):
+            confirm = "n"
+        if confirm != "y":
+            print(f"⏭️  Skipped: {output_path}")
+            return
+
     print(f"📖 Reading {input_filename} from {project_path}...")
     input_content = load_file(project_path, input_filename, required_file=required_file)
 
@@ -164,7 +188,7 @@ def run_generation(
     output_content = generate_with_gemini(system_prompt, input_content, context)
 
     print(f"💾 Saving {output_filename}...")
-    save_file(project_path, output_filename, output_content, force=force)
+    save_file(project_path, output_filename, output_content, force=True)  # pre-checked above
 
     if success_msg:
         print("\n" + "=" * 60)

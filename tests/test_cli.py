@@ -3,10 +3,11 @@ Unit tests for scripts/cli.py
 
 Run with:  pytest tests/
 """
+import os
 import sys
 import pytest
 from pathlib import Path
-from unittest.mock import patch, MagicMock, call
+from unittest.mock import patch, MagicMock
 
 # cli.py is already on sys.path via conftest.py
 import cli
@@ -92,35 +93,18 @@ class TestParserErrors:
 
 class TestCmdNew:
     def test_creates_project_dir_and_idea_md(self, tmp_path):
-        args = run_cli("new", "cool-app")
-        with patch.object(Path, "cwd", return_value=tmp_path):
-            with patch("cli.Path") as MockPath:
-                # Let the real Path work but redirect "projects" to tmp_path
-                real_path = Path
-                def side_effect(arg=""):
-                    if arg == "projects":
-                        return tmp_path
-                    return real_path(arg)
-                MockPath.side_effect = side_effect
-                # Simpler approach: just use tmp_path directly
-        projects_dir = tmp_path / "projects"
-        with patch("cli.Path", side_effect=lambda *a: tmp_path / Path(*a) if a else Path()):
-            pass
-        # Direct integration test against a real temp filesystem
-        import os
         old_cwd = os.getcwd()
         os.chdir(tmp_path)
         try:
-            args2 = MagicMock()
-            args2.project_name = "cool-app"
-            cli.cmd_new(args2)
+            args = MagicMock()
+            args.project_name = "cool-app"
+            cli.cmd_new(args)
             assert (tmp_path / "projects" / "cool-app").is_dir()
             assert (tmp_path / "projects" / "cool-app" / "idea.md").exists()
         finally:
             os.chdir(old_cwd)
 
     def test_exits_if_project_already_exists(self, tmp_path):
-        import os
         old_cwd = os.getcwd()
         os.chdir(tmp_path)
         try:

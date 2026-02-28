@@ -157,8 +157,8 @@ def _parse_story_block(block: str, category: str) -> dict | None:
     order_match = re.search(r"\*\*Build Order\*\*:\s*#?(\d+)", block)
     build_order = int(order_match.group(1)) if order_match else 9999
 
-    # ── Acceptance Criteria (full text) ──────────────────────────────
-    ac_items = re.findall(r"^\s*- \[[ xX]\]\s*(.+)$", block, re.MULTILINE)
+    # ── Acceptance Criteria (unchecked items only) ───────────────────────────
+    ac_items = re.findall(r"^\s*- \[ \]\s*(.+)$", block, re.MULTILINE)
     acceptance_criteria = "\n".join(f"• {_strip_markdown(item.strip())}" for item in ac_items)
 
     return {
@@ -176,9 +176,7 @@ def _parse_story_block(block: str, category: str) -> dict | None:
     }
 
 
-def _first_match(pattern: str, text: str) -> str | None:
-    m = re.search(pattern, text)
-    return m.group(1).strip() if m else None
+
 
 # ─── Google Sheets helpers ────────────────────────────────────────────────────
 

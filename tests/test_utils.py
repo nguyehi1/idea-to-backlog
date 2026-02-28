@@ -78,6 +78,19 @@ class TestLoadFile:
         (tmp_path / "idea.md").write_text("My great idea")
         assert utils.load_file(tmp_path, "idea.md") == "My great idea"
 
+    def test_raises_when_file_is_empty(self, tmp_path):
+        """Regression: empty file (e.g. unsaved editor buffer) must fail loudly."""
+        import utils
+        (tmp_path / "idea.md").write_text("")
+        with pytest.raises(ValueError, match="empty"):
+            utils.load_file(tmp_path, "idea.md")
+
+    def test_raises_when_file_is_whitespace_only(self, tmp_path):
+        import utils
+        (tmp_path / "idea.md").write_text("   \n\n\t  ")
+        with pytest.raises(ValueError, match="empty"):
+            utils.load_file(tmp_path, "idea.md")
+
     def test_path_stem_used_not_split(self, tmp_path):
         """Regression: required_file with dots like 'user_stories.md' should stem correctly."""
         import utils
@@ -123,6 +136,31 @@ class TestSaveFile:
         (tmp_path / "output.md").write_text("original")
         utils.save_file(tmp_path, "output.md", "new content", force=True)
         assert (tmp_path / "output.md").read_text() == "new content"
+
+
+# ---------------------------------------------------------------------------
+# run_generation — overwrite guard
+# ---------------------------------------------------------------------------
+
+class TestRunGenerationOverwriteGuard:
+    def test_skips_gemini_when_output_exists_and_declined(self, tmp_path):
+        """Gemini must NOT be called if the user declines the overwrite prompt."""
+        import utils
+        (tmp_path / "idea.md").write_text("# My Idea\nSome content")
+        (tmp_path / "prd.md").write_text("existing prd")
+
+        with patch("builtins.input", return_value="n"), \
+             patch("utils.generate_with_gemini") as mock_gen:
+            utils.run_generation(
+                project_path=tmp_path,
+                input_filename="idea.md",
+                output_filename="prd.md",
+                prompt_filename="prd_prompt.txt",
+                context="product idea and context",
+            )
+            mock_gen.assert_not_called()
+
+        assert (tmp_path / "prd.md").read_text() == "existing prd"
 
 
 # ---------------------------------------------------------------------------
